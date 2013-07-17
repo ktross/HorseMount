@@ -1,0 +1,106 @@
+name: HorseMount
+main: com.ktross.horsemount.HorseMount
+version: 1.0
+description: wat
+author: ktross
+
+commands:
+  horsemount:
+    description: HorseMount help command
+    aliases: hm
+    permission: horsemount.help
+    permission-message: No permission.
+  mount:
+    aliases: mnt
+    description: Summon/dismiss a mount
+    permission: horsemount.mount
+    permission-message: No permission.
+  dismount:
+    description: Dismiss a mount
+    permission: horsemount.dismount
+    permission-message: No permission.
+  setmount:
+    description: Set your default mount
+    permission: horsemount.setmount
+    permission-message: No permission.
+  setarmor:
+    description: Set your mounts default armor
+    permission: horsemount.setarmor
+    permission-message: No permission.
+
+permissions:
+  horsemount.help:
+    description: Allows you to run the help command
+    default: true
+  horsemount.mount:
+    description: Allows you to summon mounts
+    default: false
+  horsemount.dismount:
+    description: Allows you to dismount horses
+    default: true
+  horsemount.setarmor:
+    description: Allows you to set your default armor
+    default: true
+  horsemount.armor.iron:
+    description: Allows you to use this horse armor
+    default: false
+  horsemount.armor.gold:
+    description: Allows you to use this horse armor
+    default: false
+  horsemount.armor.diamond:
+    description: Allows you to use this horse armor
+    default: false
+  horsemount.setmount:
+    description: Allows you to set your default mount
+    default: true
+  horsemount.variant.horse:
+    description: allows you to use this mount variant
+    default: false
+  horsemount.variant.mule:
+    description: allows you to use this mount variant
+    default: false
+  horsemount.variant.donkey:
+    description: allows you to use this mount variant
+    default: false
+  horsemount.variant.skeleton:
+    description: allows you to use this mount variant
+    default: false
+  horsemount.variant.zombie:
+    description: allows you to use this mount variant
+    default: false
+  horsemount.style.default:
+    description: allows you to use this mount style
+    default: false
+  horsemount.style.white:
+    description: allows you to use this mount style
+    default: false
+  horsemount.style.whitefield:
+    description: allows you to use this mount style
+    default: false
+  horsemount.style.whitedots:
+    description: allows you to use this mount style
+    default: false
+  horsemount.style.blackdots:
+    description: allows you to use this mount style
+    default: false
+  horsemount.color.white:
+    description: allows you to use this mount color
+    default: false
+  horsemount.color.creamy:
+    description: allows you to use this mount color
+    default: false
+  horsemount.color.chestnut:
+    description: allows you to use this mount color
+    default: false
+  horsemount.color.brown:
+    description: allows you to use this mount color
+    default: false
+  horsemount.color.black:
+    description: allows you to use this mount color
+    default: false
+  horsemount.color.gray:
+    description: allows you to use this mount color
+    default: false
+  horsemount.color.darkbrown:
+    description: allows you to use this mount color
+    default: false

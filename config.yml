@@ -1,0 +1,8 @@
+disable-spawning: true
+disable-item-drops: true
+players:
+  default:
+    variant: horse
+    style: default
+    color: white
+    armor: none
