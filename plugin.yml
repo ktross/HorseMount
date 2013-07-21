@@ -1,7 +1,7 @@
 name: HorseMount
 main: com.ktross.horsemount.HorseMount
 version: 1.0
-description: wat
+description: HorseMount is a flexible player mount system. It allows players to summon and dismiss horse mounts with a simple command. Players can also choose to set their default mount via command or sign from 140 different mount types.
 author: ktross
 
 commands:
@@ -9,29 +9,82 @@ commands:
     description: HorseMount help command
     aliases: hm
     permission: horsemount.help
-    permission-message: No permission.
+    permission-message: You do not have permission to use this command.
   mount:
     aliases: mnt
     description: Summon/dismiss a mount
     permission: horsemount.mount
-    permission-message: No permission.
+    permission-message: You do not have permission to use this command.
   dismount:
     description: Dismiss a mount
     permission: horsemount.dismount
-    permission-message: No permission.
+    permission-message: You do not have permission to use this command.
   setmount:
     description: Set your default mount
     permission: horsemount.setmount
-    permission-message: No permission.
+    permission-message: You do not have permission to use this command.
   setarmor:
     description: Set your mounts default armor
     permission: horsemount.setarmor
-    permission-message: No permission.
+    permission-message: You do not have permission to use this command.
 
 permissions:
+  horsemount.*:
+    description: Allows access to everything
+    default: false
+    children:
+      horsemount.help: true
+      horsemount.reload: true
+      horsemount.mount: true
+      horsemount.dismount: true
+      horsemount.setmount: true
+      horsemount.setarmor: true
+      horsemount.variant.*: true
+      horsemount.style.*: true
+      horsemount.color.*: true
+      horsemount.armor.*: true
+  horsemount.variant.*:
+    description: Allows access to all mount variants
+    default: false
+    children:
+      horsemount.variant.horse: true
+      horsemount.variant.mule: true
+      horsemount.variant.donkey: true
+      horsemount.variant.skeleton: true
+      horsemount.variant.zombie: true
+  horsemount.style.*:
+    description: Allows access to all mount styles
+    default: false
+    children:
+      horsemount.style.default: true
+      horsemount.style.white: true
+      horsemount.style.whitefield: true
+      horsemount.style.whitedots: true
+      horsemount.style.blackdots: true
+  horsemount.color.*:
+    description: Allows access to all mount colors
+    default: false
+    children:
+      horsemount.color.white: true
+      horsemount.color.creamy: true
+      horsemount.color.chestnut: true
+      horsemount.color.brown: true
+      horsemount.color.black: true
+      horsemount.color.gray: true
+      horsemount.color.darkbrown: true
+  horsemount.armor.*:
+    description: Allows access to all mount armor
+    default: false
+    children:
+      horsemount.armor.iron: true
+      horsemount.armor.gold: true
+      horsemount.armor.diamond: true
   horsemount.help:
     description: Allows you to run the help command
     default: true
+  horsemount.reload:
+    description: Allows you to reload the plugin config
+    default: false
   horsemount.mount:
     description: Allows you to summon mounts
     default: false
