@@ -39,6 +39,10 @@ public class HorseMountCommandExecutor implements CommandExecutor {
 					return false;
 				}
 			}
+			if (!player.hasPermission("horsemount.help")) {
+				plugin.msgPlayer(sender, "You do not have permission to use this command.");
+				return false;
+			}
 			plugin.msgPlayer(sender, "Welcome to HorseMount! Please refer to http://dev.bukkit.org/bukkit-plugins/horsemount/ for a list of commands and documentation.");
 			return true;
 		}
