@@ -79,6 +79,7 @@ public final class HorseMount extends JavaPlugin implements Listener {
 		getCommand("dismount").setExecutor(new HorseMountCommandExecutor(this));
 		getCommand("setmount").setExecutor(new HorseMountCommandExecutor(this));
 		getCommand("setarmor").setExecutor(new HorseMountCommandExecutor(this));
+		getCommand("showmount").setExecutor(new HorseMountCommandExecutor(this));
 		
 		// Plugin Metrics
 		try {

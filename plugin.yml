@@ -27,6 +27,10 @@ commands:
     description: Set your mounts default armor
     permission: horsemount.setarmor
     permission-message: You do not have permission to use this command.
+  showmount:
+    description: Show your default mount
+    permission: horsemount.showmount
+    permission-message: You do not have permission to use this command.
 
 permissions:
   horsemount.*:
@@ -43,6 +47,7 @@ permissions:
       horsemount.style.*: true
       horsemount.color.*: true
       horsemount.armor.*: true
+      horsemount.showmount: true
   horsemount.variant.*:
     description: Allows access to all mount variants
     default: false
@@ -88,6 +93,9 @@ permissions:
   horsemount.mount:
     description: Allows you to summon mounts
     default: false
+  horsemount.showmount:
+    description: Allows you to run the showmount command
+    default: true
   horsemount.dismount:
     description: Allows you to dismount horses
     default: true

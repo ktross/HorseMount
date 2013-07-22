@@ -210,6 +210,21 @@ public class HorseMountCommandExecutor implements CommandExecutor {
 			return false;
 		}
 		
+		if (cmd.getName().equalsIgnoreCase("showmount")) {
+			if (!player.hasPermission("horsemount.showmount")) {
+				plugin.msgPlayer(sender, "You do not have permission to use this command.");
+				return false;
+			}
+			
+			String mountVariant = (String) ((plugin.getConfig().get("players."+sender.getName()+".variant") != null) ? plugin.getConfig().get("players."+sender.getName()+".variant") : plugin.getConfig().get("players.default.variant"));
+			String mountStyle = (String) ((plugin.getConfig().get("players."+sender.getName()+".style") != null) ? plugin.getConfig().get("players."+sender.getName()+".style") : plugin.getConfig().get("players.default.style"));
+			String mountColor = (String) ((plugin.getConfig().get("players."+sender.getName()+".color") != null) ? plugin.getConfig().get("players."+sender.getName()+".color") : plugin.getConfig().get("players.default.color"));
+			String mountArmor = (String) ((plugin.getConfig().get("players."+sender.getName()+".armor") != null) ? plugin.getConfig().get("players."+sender.getName()+".armor") : plugin.getConfig().get("players.default.armor"));
+			
+			plugin.msgPlayer(sender, "Variant: "+mountVariant+", Style: "+mountStyle+", Color: "+mountColor+", Armor: "+mountArmor);
+			return true;
+		}
+		
 		//No command matched
 		return false;
 	}
