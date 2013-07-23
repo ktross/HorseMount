@@ -6,24 +6,30 @@ import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.apache.commons.lang3.text.WordUtils;
 
 public final class HorseMount extends JavaPlugin implements Listener {
 	
@@ -155,6 +161,65 @@ public final class HorseMount extends JavaPlugin implements Listener {
 			if (event.getDamage() >= p.getHealth()) {
 				Horse h = (Horse) event.getEntity().getVehicle();
 				h.remove();
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onSignChange(SignChangeEvent event) {
+		if ((event.getLine(0).equalsIgnoreCase("[HM]") || event.getLine(0).equalsIgnoreCase("[HorseMount]")) && event.getPlayer().hasPermission("horsemount.signs.create")) {
+			if (this.mountArmor.get(event.getLine(1)) != null) {
+				event.setLine(0, ChatColor.AQUA+"[HorseMount]");
+				event.setLine(1, WordUtils.capitalize(event.getLine(1)));
+			} else {
+				if (this.mountVariants.get(event.getLine(1)) != null && !event.getLine(1).equalsIgnoreCase("horse")) {
+					event.setLine(0, ChatColor.AQUA+"[HorseMount]");
+					event.setLine(1, WordUtils.capitalize(event.getLine(1)));
+				}
+				else if (this.mountStyles.get(event.getLine(2)) != null && this.mountColors.get(event.getLine(3)) != null) {
+					event.setLine(0, ChatColor.AQUA+"[HorseMount]");
+					event.setLine(1, WordUtils.capitalize(event.getLine(1)));
+					event.setLine(2, WordUtils.capitalize(event.getLine(2)));
+					event.setLine(3, WordUtils.capitalize(event.getLine(3)));
+				} else {
+					event.setLine(0, "Error:");
+					event.setLine(1, "Invalid");
+					event.setLine(2, "Parameters");
+					event.setLine(3, "");
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onRightClick(PlayerInteractEvent event) {
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign) {
+			Sign clickedSign = (Sign) event.getClickedBlock().getState();
+			if (ChatColor.stripColor(clickedSign.getLine(0)).equalsIgnoreCase("[HorseMount]") && event.getPlayer().hasPermission("horsemount.signs.use")) {
+				if (this.mountArmor.get(WordUtils.uncapitalize(clickedSign.getLine(1))) != null) {
+					PluginCommand setArmor = getServer().getPluginCommand("setarmor");
+					String armorArgs[];
+					armorArgs = new String[1];
+					armorArgs[0] = WordUtils.uncapitalize(clickedSign.getLine(1));
+					setArmor.execute(event.getPlayer(), "setarmor", armorArgs);
+				} else {
+					String[] lines = clickedSign.getLines();
+					int argsCount = 0;
+					for (String line : lines) {
+						if (!line.equalsIgnoreCase("") && !ChatColor.stripColor(line).equalsIgnoreCase("[HorseMount]")) {
+							argsCount++;
+						}
+					}
+					PluginCommand setMount = getServer().getPluginCommand("setmount");
+					String[] mountArgs;
+					mountArgs = new String[argsCount];
+					int count = 0;
+					while (count < argsCount) {
+						mountArgs[count] = WordUtils.uncapitalize(lines[count+1]);
+						count++;
+					}
+					setMount.execute(event.getPlayer(), "setmount", mountArgs);
+				}
 			}
 		}
 	}

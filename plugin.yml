@@ -43,11 +43,18 @@ permissions:
       horsemount.dismount: true
       horsemount.setmount: true
       horsemount.setarmor: true
+      horsemount.signs.*: true
       horsemount.variant.*: true
       horsemount.style.*: true
       horsemount.color.*: true
       horsemount.armor.*: true
       horsemount.showmount: true
+  horsemount.signs.*:
+    description: Allows access to use and create signs
+    default: false
+    children:
+      horsemount.signs.use: true
+      horsemount.signs.create: true
   horsemount.variant.*:
     description: Allows access to all mount variants
     default: false
@@ -99,6 +106,12 @@ permissions:
   horsemount.dismount:
     description: Allows you to dismount horses
     default: true
+  horsemount.signs.use:
+    description: Allows you to use signs
+    default: true
+  horsemount.signs.create:
+    description: Allows you to create signs
+    default: false
   horsemount.setarmor:
     description: Allows you to set your default armor
     default: true
