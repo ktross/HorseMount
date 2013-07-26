@@ -113,7 +113,7 @@ public final class HorseMount extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-		if (event.getRightClicked() instanceof Horse) {
+		if (event.getRightClicked() instanceof Horse && event.getRightClicked().isEmpty() && event.getPlayer().getItemInHand().getType() != Material.LEASH) {
 			boolean eventCancelled = true;
 			Player p = (Player) event.getPlayer();
 			if (p.hasPermission("horsemount.mount")) {
