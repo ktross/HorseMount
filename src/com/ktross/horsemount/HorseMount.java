@@ -21,6 +21,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -163,6 +164,17 @@ public final class HorseMount extends JavaPlugin implements Listener {
 	public void onEntityDeath(EntityDeathEvent event) {
 		if(event.getEntityType() == EntityType.HORSE && this.DisableItemDrops == true) {
 			event.getDrops().clear();
+			event.setDroppedExp(0);
+		}
+	}
+	
+	@EventHandler
+	public void onItemSpawn(ItemSpawnEvent event) {
+		if ((event.getEntity().getItemStack().getType() == Material.SADDLE || event.getEntity().getItemStack().getType() == Material.IRON_BARDING || event.getEntity().getItemStack().getType() == Material.GOLD_BARDING || event.getEntity().getItemStack().getType() == Material.DIAMOND_BARDING) && this.DisableItemDrops == true) {
+			// Workaround to prevent saddle/armor drops due to bukkit bug
+			if (event.getEntity().getVelocity().getY() == 0.20000000298023224) {
+				event.setCancelled(true);
+			}
 		}
 	}
 	
