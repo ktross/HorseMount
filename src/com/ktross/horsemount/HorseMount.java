@@ -20,6 +20,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -149,19 +150,19 @@ public final class HorseMount extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
-		if (event.getEntityType() == EntityType.HORSE) {
-			Damageable h = (Damageable) event.getEntity();
-			if (event.getDamage() >= h.getHealth() && this.DisableItemDrops == true) {
-				event.setCancelled(true);
-				event.getEntity().remove();
-			}
-		}
 		if (event.getEntityType() == EntityType.PLAYER && event.getEntity().getVehicle() != null) {
 			Damageable p = (Damageable) event.getEntity();
 			if (event.getDamage() >= p.getHealth()) {
 				Horse h = (Horse) event.getEntity().getVehicle();
 				h.remove();
 			}
+		}
+	}
+	
+	@EventHandler
+	public void onEntityDeath(EntityDeathEvent event) {
+		if(event.getEntityType() == EntityType.HORSE && this.DisableItemDrops == true) {
+			event.getDrops().clear();
 		}
 	}
 	
