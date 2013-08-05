@@ -154,7 +154,7 @@ public final class HorseMount extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
-		if (event.getEntityType() == EntityType.HORSE && ((LivingEntity) event.getEntity()).getCustomName().equalsIgnoreCase("[HM] Display")) {
+		if (event.getEntityType() == EntityType.HORSE && ((LivingEntity) event.getEntity()).getCustomName() != null && ((LivingEntity) event.getEntity()).getCustomName().equalsIgnoreCase("[HM] Display")) {
 			event.setCancelled(true);
 		}
 		if (event.getEntityType() == EntityType.PLAYER && event.getEntity().getVehicle() != null) {
