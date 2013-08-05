@@ -31,6 +31,10 @@ commands:
     description: Show your default mount
     permission: horsemount.showmount
     permission-message: You do not have permission to use this command.
+  spawnmount:
+    description: Spawn an unrideable mount for display
+    permission: horsemount.spawnmount
+    permission-message: You do not have permission to use this command.
 
 permissions:
   horsemount.*:
@@ -49,6 +53,7 @@ permissions:
       horsemount.color.*: true
       horsemount.armor.*: true
       horsemount.showmount: true
+      horsemount.spawnmount: true
   horsemount.signs.*:
     description: Allows access to use and create signs
     default: false
@@ -103,6 +108,9 @@ permissions:
   horsemount.showmount:
     description: Allows you to run the showmount command
     default: true
+  horsemount.spawnmount:
+    description: Allows you to run the spawnmount command
+    default: false
   horsemount.dismount:
     description: Allows you to dismount horses
     default: true

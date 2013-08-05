@@ -12,6 +12,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -88,6 +89,7 @@ public final class HorseMount extends JavaPlugin implements Listener {
 		getCommand("setmount").setExecutor(new HorseMountCommandExecutor(this));
 		getCommand("setarmor").setExecutor(new HorseMountCommandExecutor(this));
 		getCommand("showmount").setExecutor(new HorseMountCommandExecutor(this));
+		getCommand("spawnmount").setExecutor(new HorseMountCommandExecutor(this));
 		
 		// Plugin Metrics
 		try {
@@ -118,10 +120,11 @@ public final class HorseMount extends JavaPlugin implements Listener {
 		if (event.getRightClicked() instanceof Horse && event.getRightClicked().isEmpty() && event.getPlayer().getItemInHand().getType() != Material.LEASH) {
 			boolean eventCancelled = true;
 			Player p = (Player) event.getPlayer();
-			if (p.hasPermission("horsemount.mount")) {
+			LivingEntity h = (LivingEntity) event.getRightClicked();
+			if (p.hasPermission("horsemount.mount") && (!h.getCustomName().equalsIgnoreCase("[HM] Display") || p.hasPermission("horsemount.spawnmount"))) {
 				eventCancelled = false;
 			} else {
-				msgPlayer(p, "You do not have permission to mount horses.");
+				msgPlayer(p, "You do not have permission to mount this horse.");
 			}
 			event.setCancelled(eventCancelled);
 		}
@@ -151,6 +154,9 @@ public final class HorseMount extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
+		if (event.getEntityType() == EntityType.HORSE && ((LivingEntity) event.getEntity()).getCustomName().equalsIgnoreCase("[HM] Display")) {
+			event.setCancelled(true);
+		}
 		if (event.getEntityType() == EntityType.PLAYER && event.getEntity().getVehicle() != null) {
 			Damageable p = (Damageable) event.getEntity();
 			if (event.getDamage() >= p.getHealth()) {

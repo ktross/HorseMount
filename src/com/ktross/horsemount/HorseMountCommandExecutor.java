@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
@@ -223,6 +224,36 @@ public class HorseMountCommandExecutor implements CommandExecutor {
 			
 			plugin.msgPlayer(sender, "Variant: "+mountVariant+", Style: "+mountStyle+", Color: "+mountColor+", Armor: "+mountArmor);
 			return true;
+		}
+		
+		if (cmd.getName().equalsIgnoreCase("spawnmount")) {
+			if (!player.hasPermission("horsemount.spawnmount")) {
+				plugin.msgPlayer(sender, "You do not have permission to use this command.");
+				return false;
+			}
+			if (args.length == 0 || args.length > 3) {
+				plugin.msgPlayer(sender, "Invalid command arguments.");
+				return false;
+			}
+			
+			if (plugin.mountVariants.get(args[0]) != null) {
+				Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
+				HorseInventory inv = horse.getInventory();
+				horse.setVariant(plugin.mountVariants.get(args[0]));
+				if (args.length >= 2 && plugin.mountStyles.get(args[1]) != null) {
+					horse.setStyle(plugin.mountStyles.get(args[1]));
+				}
+				if (args.length == 3 && plugin.mountColors.get(args[2]) != null) {
+					horse.setColor(plugin.mountColors.get(args[2]));
+				}
+				inv.setSaddle(new ItemStack(Material.SADDLE, 1));
+				horse.setOwner(player);
+				((LivingEntity) horse).setCustomName("[HM] Display");
+				return true;
+			}
+			
+			plugin.msgPlayer(sender, "Unable to spawn mount: mount not found.");
+			return false;
 		}
 		
 		//No command matched
