@@ -189,7 +189,7 @@ public final class HorseMount extends JavaPlugin implements Listener {
 					event.setLine(0, ChatColor.AQUA+"[HorseMount]");
 					event.setLine(1, WordUtils.capitalize(event.getLine(1)));
 				}
-				else if (this.mountStyles.get(event.getLine(2)) != null && this.mountColors.get(event.getLine(3)) != null) {
+				else if (this.mountVariants.get(event.getLine(1)) != null && this.mountStyles.get(event.getLine(2)) != null && this.mountColors.get(event.getLine(3)) != null) {
 					event.setLine(0, ChatColor.AQUA+"[HorseMount]");
 					event.setLine(1, WordUtils.capitalize(event.getLine(1)));
 					event.setLine(2, WordUtils.capitalize(event.getLine(2)));
