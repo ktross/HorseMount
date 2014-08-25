@@ -68,11 +68,11 @@ public class HorseMountCommandExecutor implements CommandExecutor {
             World world = player.getWorld();
             Location TargetLocation = player.getLocation();
             
-            if (plugin.getConfig().get("players."+player.getName()) != null) {
-            	HorseVariant = (String) plugin.getConfig().get("players."+player.getName()+".variant");
-				HorseStyle = (String) plugin.getConfig().get("players."+player.getName()+".style");
-				HorseColor = (String) plugin.getConfig().get("players."+player.getName()+".color");
-				HorseArmor = (String) plugin.getConfig().get("players."+player.getName()+".armor");
+            if (plugin.getConfig().get("players."+player.getUniqueId()) != null) {
+            	HorseVariant = (String) plugin.getConfig().get("players."+player.getUniqueId()+".variant");
+				HorseStyle = (String) plugin.getConfig().get("players."+player.getUniqueId()+".style");
+				HorseColor = (String) plugin.getConfig().get("players."+player.getUniqueId()+".color");
+				HorseArmor = (String) plugin.getConfig().get("players."+player.getUniqueId()+".armor");
             } else {
             	HorseVariant = (String) plugin.getConfig().get("players.default.variant"); 
 				HorseStyle = (String) plugin.getConfig().get("players.default.style");
@@ -112,7 +112,7 @@ public class HorseMountCommandExecutor implements CommandExecutor {
 			
 			inv.setSaddle(new ItemStack(Material.SADDLE, 1));
 			
-			if (HorseVariant.equalsIgnoreCase("horse") && !HorseArmor.equalsIgnoreCase("none") && player.hasPermission("horsemount.armor."+HorseArmor)) {
+			if (HorseVariant.equalsIgnoreCase("horse") && HorseArmor.equalsIgnoreCase("none") == false && player.hasPermission("horsemount.armor."+HorseArmor)) {
 				inv.setArmor(new ItemStack(plugin.mountArmor.get(HorseArmor), 1));
 			}
 			
@@ -144,38 +144,38 @@ public class HorseMountCommandExecutor implements CommandExecutor {
 				return false;
 			}
 			if (args[0].equalsIgnoreCase("horse")) {
-				if (plugin.getConfig().get("players."+sender.getName()+".armor") == null) {
-					plugin.getConfig().set("players."+sender.getName()+".armor", "none");
+				if (plugin.getConfig().get("players."+((Player) sender).getUniqueId()+".armor") == null) {
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".armor", "none");
 				}
 				if (args.length == 1 && player.hasPermission("horsemount.variant."+args[0])) {
-					plugin.getConfig().set("players."+sender.getName()+".variant", args[0]);
-					plugin.getConfig().set("players."+sender.getName()+".style", plugin.getConfig().get("players.default.style"));
-					plugin.getConfig().set("players."+sender.getName()+".color", plugin.getConfig().get("players.default.color"));
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".variant", args[0]);
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".style", plugin.getConfig().get("players.default.style"));
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".color", plugin.getConfig().get("players.default.color"));
 					plugin.saveConfig();
 					plugin.msgPlayer(sender, "Your default mount has been set. Variant: "+args[0]+", Style: "+plugin.getConfig().get("players.default.style")+", Color: "+plugin.getConfig().get("players.default.color"));
 					return true;
 				}
 				if (args.length == 2 && plugin.mountStyles.get(args[1]) != null && player.hasPermission("horsemount.variant."+args[0]) && player.hasPermission("horsemount.style."+args[1])) {
-					plugin.getConfig().set("players."+sender.getName()+".variant", args[0]);
-					plugin.getConfig().set("players."+sender.getName()+".style", args[1]);
-					plugin.getConfig().set("players."+sender.getName()+".color", plugin.getConfig().get("players.default.color"));
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".variant", args[0]);
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".style", args[1]);
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".color", plugin.getConfig().get("players.default.color"));
 					plugin.saveConfig();
 					plugin.msgPlayer(sender, "Your default mount has been set. Variant: "+args[0]+", Style: "+args[1]+", Color: "+plugin.getConfig().get("players.default.color"));
 					return true;
 				}
 				if (args.length == 3 && plugin.mountStyles.get(args[1]) != null && plugin.mountColors.get(args[2]) != null && player.hasPermission("horsemount.variant."+args[0]) && player.hasPermission("horsemount.style."+args[1]) && player.hasPermission("horsemount.color."+args[2])) {
-					plugin.getConfig().set("players."+sender.getName()+".variant", args[0]);
-					plugin.getConfig().set("players."+sender.getName()+".style", args[1]);
-					plugin.getConfig().set("players."+sender.getName()+".color", args[2]);
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".variant", args[0]);
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".style", args[1]);
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".color", args[2]);
 					plugin.saveConfig();
 					plugin.msgPlayer(sender, "Your default mount has been set. Variant: "+args[0]+", Style: "+args[1]+", Color: "+args[2]);
 					return true;
 				}
 			} else {
 				if (args.length == 1 && plugin.mountVariants.get(args[0]) != null && player.hasPermission("horsemount.variant."+args[0])) {
-					plugin.getConfig().set("players."+sender.getName()+".variant", args[0]);
-					plugin.getConfig().set("players."+sender.getName()+".style", "none");
-					plugin.getConfig().set("players."+sender.getName()+".color", "none");
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".variant", args[0]);
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".style", "none");
+					plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".color", "none");
 					plugin.saveConfig();
 					plugin.msgPlayer(sender, "Your default mount has been set. Variant: "+args[0]);
 					return true;
@@ -190,19 +190,19 @@ public class HorseMountCommandExecutor implements CommandExecutor {
 				plugin.msgPlayer(sender, "You do not have permission to use this command.");
 				return false;
 			}
-			if (plugin.getConfig().get("players."+player.getName()+".variant") == null || plugin.getConfig().get("players."+player.getName()+".style") == null || plugin.getConfig().get("players."+player.getName()+".color") == null) {
-				plugin.getConfig().set("players."+sender.getName()+".variant", plugin.getConfig().get("players.default.variant"));
-				plugin.getConfig().set("players."+sender.getName()+".style", plugin.getConfig().get("players.default.style"));
-				plugin.getConfig().set("players."+sender.getName()+".color", plugin.getConfig().get("players.default.color"));
+			if (plugin.getConfig().get("players."+player.getUniqueId()+".variant") == null || plugin.getConfig().get("players."+player.getUniqueId()+".style") == null || plugin.getConfig().get("players."+player.getUniqueId()+".color") == null) {
+				plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".variant", plugin.getConfig().get("players.default.variant"));
+				plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".style", plugin.getConfig().get("players.default.style"));
+				plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".color", plugin.getConfig().get("players.default.color"));
 			}
 			if (args.length == 1 && args[0].equalsIgnoreCase("none")) {
-				plugin.getConfig().set("players."+sender.getName()+".armor", args[0]);
+				plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".armor", args[0]);
 				plugin.saveConfig();
 				plugin.msgPlayer(sender, "Your default mount armor has been set to: "+args[0]);
 				return true;
 			}
 			if (args.length == 1 && plugin.mountArmor.get(args[0]) != null && player.hasPermission("horsemount.armor."+args[0])) {
-				plugin.getConfig().set("players."+sender.getName()+".armor", args[0]);
+				plugin.getConfig().set("players."+((Player) sender).getUniqueId()+".armor", args[0]);
 				plugin.saveConfig();
 				plugin.msgPlayer(sender, "Your default mount armor has been set to: "+args[0]);
 				return true;
@@ -217,10 +217,10 @@ public class HorseMountCommandExecutor implements CommandExecutor {
 				return false;
 			}
 			
-			String mountVariant = (String) ((plugin.getConfig().get("players."+sender.getName()+".variant") != null) ? plugin.getConfig().get("players."+sender.getName()+".variant") : plugin.getConfig().get("players.default.variant"));
-			String mountStyle = (String) ((plugin.getConfig().get("players."+sender.getName()+".style") != null) ? plugin.getConfig().get("players."+sender.getName()+".style") : plugin.getConfig().get("players.default.style"));
-			String mountColor = (String) ((plugin.getConfig().get("players."+sender.getName()+".color") != null) ? plugin.getConfig().get("players."+sender.getName()+".color") : plugin.getConfig().get("players.default.color"));
-			String mountArmor = (String) ((plugin.getConfig().get("players."+sender.getName()+".armor") != null) ? plugin.getConfig().get("players."+sender.getName()+".armor") : plugin.getConfig().get("players.default.armor"));
+			String mountVariant = (String) ((plugin.getConfig().get("players."+((Player) sender).getUniqueId()+".variant") != null) ? plugin.getConfig().get("players."+((Player) sender).getUniqueId()+".variant") : plugin.getConfig().get("players.default.variant"));
+			String mountStyle = (String) ((plugin.getConfig().get("players."+((Player) sender).getUniqueId()+".style") != null) ? plugin.getConfig().get("players."+((Player) sender).getUniqueId()+".style") : plugin.getConfig().get("players.default.style"));
+			String mountColor = (String) ((plugin.getConfig().get("players."+((Player) sender).getUniqueId()+".color") != null) ? plugin.getConfig().get("players."+((Player) sender).getUniqueId()+".color") : plugin.getConfig().get("players.default.color"));
+			String mountArmor = (String) ((plugin.getConfig().get("players."+((Player) sender).getUniqueId()+".armor") != null) ? plugin.getConfig().get("players."+((Player) sender).getUniqueId()+".armor") : plugin.getConfig().get("players.default.armor"));
 			
 			plugin.msgPlayer(sender, "Variant: "+mountVariant+", Style: "+mountStyle+", Color: "+mountColor+", Armor: "+mountArmor);
 			return true;

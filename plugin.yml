@@ -1,6 +1,6 @@
 name: HorseMount
 main: com.ktross.horsemount.HorseMount
-version: 1.0.1
+version: 1.1.0
 description: HorseMount is a flexible player mount system. It allows players to summon and dismiss horse mounts with a simple command. Players can also choose to set their default mount via command or sign from 140 different mount types.
 author: ktross
 

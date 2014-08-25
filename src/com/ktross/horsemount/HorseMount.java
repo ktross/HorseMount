@@ -32,7 +32,7 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.lang.WordUtils;
 
 public final class HorseMount extends JavaPlugin implements Listener {
 	
@@ -117,11 +117,11 @@ public final class HorseMount extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-		if (event.getRightClicked() instanceof Horse && event.getRightClicked().isEmpty() && event.getPlayer().getItemInHand().getType() != Material.LEASH) {
+		if (event.getRightClicked() instanceof Horse && event.getRightClicked().isEmpty()) {
 			boolean eventCancelled = true;
 			Player p = (Player) event.getPlayer();
 			LivingEntity h = (LivingEntity) event.getRightClicked();
-			if (p.hasPermission("horsemount.mount") && (!h.getCustomName().equalsIgnoreCase("[HM] Display") || p.hasPermission("horsemount.spawnmount"))) {
+			if (p.hasPermission("horsemount.mount") && (h.getCustomName().equalsIgnoreCase("[HM] Display") == false || p.hasPermission("horsemount.spawnmount"))) {
 				eventCancelled = false;
 			} else {
 				msgPlayer(p, "You do not have permission to mount this horse.");
