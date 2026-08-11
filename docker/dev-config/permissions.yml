@@ -1,0 +1,5 @@
+horsemount.developer:
+  description: Grants all HorseMount permissions to local server operators
+  default: op
+  children:
+    horsemount.*: true

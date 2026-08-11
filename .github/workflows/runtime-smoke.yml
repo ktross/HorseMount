@@ -1,0 +1,194 @@
+name: Runtime compatibility smoke
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: Version embedded in the release-candidate JAR
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version embedded in the smoke-test JAR
+        required: true
+        default: 2.0.0-SNAPSHOT
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: runtime-smoke-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PLUGIN_VERSION: ${{ inputs.version || '2.0.0-SNAPSHOT' }}
+  PLUGIN_ARTIFACT_NAME: horsemount-runtime-candidate-${{ github.run_id }}
+
+jobs:
+  build:
+    name: Build universal JAR
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Validate requested version
+        shell: bash
+        run: |
+          if [[ ! "$PLUGIN_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?$ ]]; then
+            echo "Expected X.Y.Z or X.Y.Z-SNAPSHOT, got: $PLUGIN_VERSION" >&2
+            exit 1
+          fi
+
+      - name: Set up Java 25
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up and validate Gradle
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+        with:
+          cache-provider: basic
+          validate-wrappers: true
+
+      - name: Build and compile-check Spigot and Paper
+        run: ./gradlew --no-daemon clean build -Pversion="$PLUGIN_VERSION"
+
+      - name: Generate SHA-256 checksum
+        shell: bash
+        run: |
+          artifact="HorseMount-${PLUGIN_VERSION}.jar"
+          if [[ ! -f "build/libs/$artifact" ]]; then
+            echo "Expected plugin artifact not found: build/libs/$artifact" >&2
+            exit 1
+          fi
+          cd build/libs
+          sha256sum "$artifact" > "$artifact.sha256"
+
+      - name: Upload release candidate
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: ${{ env.PLUGIN_ARTIFACT_NAME }}
+          path: |
+            build/libs/HorseMount-${{ env.PLUGIN_VERSION }}.jar
+            build/libs/HorseMount-${{ env.PLUGIN_VERSION }}.jar.sha256
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 7
+
+  smoke:
+    name: Boot ${{ matrix.server.name }} 26.2
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        server:
+          - name: Paper
+            id: paper
+          - name: Spigot
+            id: spigot
+          - name: CraftBukkit
+            id: craftbukkit
+
+    steps:
+      - name: Check out smoke-test script
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Java 25
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Download universal JAR
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ${{ env.PLUGIN_ARTIFACT_NAME }}
+          path: candidate
+
+      - name: Verify universal JAR checksum
+        shell: bash
+        run: |
+          cd candidate
+          sha256sum --check "HorseMount-${PLUGIN_VERSION}.jar.sha256"
+
+      - name: Prepare Paper server
+        if: matrix.server.id == 'paper'
+        id: paper
+        shell: bash
+        env:
+          PAPER_SHA256: 3ec81e3ea50cc6090b94aab024491846a202702e8a874308a5d7510f6b3aa012
+          PAPER_URL: https://fill-data.papermc.io/v1/objects/3ec81e3ea50cc6090b94aab024491846a202702e8a874308a5d7510f6b3aa012/paper-26.2-111.jar
+        run: |
+          mkdir -p "$RUNNER_TEMP/paper"
+          curl --fail --location --retry 3 --silent --show-error \
+            --user-agent "HorseMount CI/2 (${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY})" \
+            "$PAPER_URL" --output "$RUNNER_TEMP/paper/server.jar"
+          echo "$PAPER_SHA256  $RUNNER_TEMP/paper/server.jar" | sha256sum --check
+          echo "jar=$RUNNER_TEMP/paper/server.jar" >> "$GITHUB_OUTPUT"
+
+      - name: Build ${{ matrix.server.name }} with BuildTools
+        if: matrix.server.id != 'paper'
+        id: buildtools
+        shell: bash
+        env:
+          BUILDTOOLS_SHA256: b61fa90158f594ee95bea1a27399eb64d439b4c8ae9345bd4476a02ce49b06ff
+          BUILDTOOLS_URL: https://hub.spigotmc.org/jenkins/job/BuildTools/200/artifact/target/BuildTools.jar
+          SERVER_ID: ${{ matrix.server.id }}
+        run: |
+          work_dir="$(mktemp -d "$RUNNER_TEMP/buildtools-${SERVER_ID}-XXXXXX")"
+          output_dir="$work_dir/output"
+          mkdir -p "$output_dir" "$work_dir/maven-repository"
+          curl --fail --location --retry 3 --silent --show-error \
+            --user-agent "HorseMount CI/2 (${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY})" \
+            "$BUILDTOOLS_URL" --output "$work_dir/BuildTools.jar"
+          echo "$BUILDTOOLS_SHA256  $work_dir/BuildTools.jar" | sha256sum --check
+
+          arguments=(
+            --rev 26.2
+            --output-dir "$output_dir"
+            --final-name server.jar
+          )
+          if [[ "$SERVER_ID" == craftbukkit ]]; then
+            arguments+=(--compile craftbukkit)
+          fi
+
+          cd "$work_dir"
+          export MAVEN_OPTS="-Dmaven.repo.local=$work_dir/maven-repository"
+          java -Xmx2G -jar BuildTools.jar "${arguments[@]}"
+
+          if [[ ! -f "$output_dir/server.jar" ]]; then
+            echo "BuildTools did not produce $output_dir/server.jar" >&2
+            exit 1
+          fi
+          echo "jar=$output_dir/server.jar" >> "$GITHUB_OUTPUT"
+
+      - name: Start server and verify HorseMount
+        shell: bash
+        env:
+          PAPER_JAR: ${{ steps.paper.outputs.jar }}
+          BUILDTOOLS_JAR: ${{ steps.buildtools.outputs.jar }}
+          MINECRAFT_EULA: ${{ vars.MINECRAFT_EULA }}
+          SERVER_ID: ${{ matrix.server.id }}
+          SERVER_NAME: ${{ matrix.server.name }}
+        run: |
+          if [[ "$SERVER_ID" == paper ]]; then
+            server_jar="$PAPER_JAR"
+          else
+            server_jar="$BUILDTOOLS_JAR"
+          fi
+          bash .github/scripts/smoke-server.sh \
+            "$server_jar" \
+            "candidate/HorseMount-${PLUGIN_VERSION}.jar" \
+            "$SERVER_NAME"

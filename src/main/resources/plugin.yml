@@ -1,22 +1,24 @@
 name: HorseMount
 main: com.ktross.horsemount.HorseMount
-version: 1.1.0
-description: HorseMount is a flexible player mount system. It allows players to summon and dismiss horse mounts with a simple command. Players can also choose to set their default mount via command or sign from 140 different mount types.
+version: '${version}'
+description: A flexible player mount system for Bukkit-compatible servers.
 author: ktross
+website: https://github.com/ktross/HorseMount
+api-version: '26.2'
 
 commands:
   horsemount:
-    description: HorseMount help command
-    aliases: hm
+    description: Show HorseMount help
+    aliases: [hm]
     permission: horsemount.help
     permission-message: You do not have permission to use this command.
   mount:
-    aliases: mnt
-    description: Summon/dismiss a mount
+    description: Summon or dismiss your mount
+    aliases: [mnt]
     permission: horsemount.mount
     permission-message: You do not have permission to use this command.
   dismount:
-    description: Dismiss a mount
+    description: Dismiss your mount
     permission: horsemount.dismount
     permission-message: You do not have permission to use this command.
   setmount:
@@ -24,7 +26,7 @@ commands:
     permission: horsemount.setmount
     permission-message: You do not have permission to use this command.
   setarmor:
-    description: Set your mounts default armor
+    description: Set your mount's default armor
     permission: horsemount.setarmor
     permission-message: You do not have permission to use this command.
   showmount:
@@ -38,7 +40,7 @@ commands:
 
 permissions:
   horsemount.*:
-    description: Allows access to everything
+    description: Allows access to all HorseMount features
     default: false
     children:
       horsemount.help: true
@@ -55,7 +57,7 @@ permissions:
       horsemount.showmount: true
       horsemount.spawnmount: true
   horsemount.signs.*:
-    description: Allows access to use and create signs
+    description: Allows access to use and create HorseMount signs
     default: false
     children:
       horsemount.signs.use: true
@@ -97,92 +99,92 @@ permissions:
       horsemount.armor.gold: true
       horsemount.armor.diamond: true
   horsemount.help:
-    description: Allows you to run the help command
+    description: Allows use of the help command
     default: true
   horsemount.reload:
-    description: Allows you to reload the plugin config
+    description: Allows reloading the plugin configuration
     default: false
   horsemount.mount:
-    description: Allows you to summon mounts
+    description: Allows summoning a mount
     default: false
   horsemount.showmount:
-    description: Allows you to run the showmount command
+    description: Allows showing the default mount
     default: true
   horsemount.spawnmount:
-    description: Allows you to run the spawnmount command
+    description: Allows spawning an unrideable display mount
     default: false
   horsemount.dismount:
-    description: Allows you to dismount horses
+    description: Allows dismissing mounts
     default: true
   horsemount.signs.use:
-    description: Allows you to use signs
+    description: Allows use of HorseMount signs
     default: true
   horsemount.signs.create:
-    description: Allows you to create signs
+    description: Allows creation of HorseMount signs
     default: false
   horsemount.setarmor:
-    description: Allows you to set your default armor
+    description: Allows setting default mount armor
     default: true
   horsemount.armor.iron:
-    description: Allows you to use this horse armor
+    description: Allows use of iron horse armor
     default: false
   horsemount.armor.gold:
-    description: Allows you to use this horse armor
+    description: Allows use of golden horse armor
     default: false
   horsemount.armor.diamond:
-    description: Allows you to use this horse armor
+    description: Allows use of diamond horse armor
     default: false
   horsemount.setmount:
-    description: Allows you to set your default mount
+    description: Allows setting the default mount
     default: true
   horsemount.variant.horse:
-    description: allows you to use this mount variant
+    description: Allows use of horse mounts
     default: false
   horsemount.variant.mule:
-    description: allows you to use this mount variant
+    description: Allows use of mule mounts
     default: false
   horsemount.variant.donkey:
-    description: allows you to use this mount variant
+    description: Allows use of donkey mounts
     default: false
   horsemount.variant.skeleton:
-    description: allows you to use this mount variant
+    description: Allows use of skeleton horse mounts
     default: false
   horsemount.variant.zombie:
-    description: allows you to use this mount variant
+    description: Allows use of zombie horse mounts
     default: false
   horsemount.style.default:
-    description: allows you to use this mount style
+    description: Allows use of the default horse style
     default: false
   horsemount.style.white:
-    description: allows you to use this mount style
+    description: Allows use of the white horse style
     default: false
   horsemount.style.whitefield:
-    description: allows you to use this mount style
+    description: Allows use of the white-field horse style
     default: false
   horsemount.style.whitedots:
-    description: allows you to use this mount style
+    description: Allows use of the white-dots horse style
     default: false
   horsemount.style.blackdots:
-    description: allows you to use this mount style
+    description: Allows use of the black-dots horse style
     default: false
   horsemount.color.white:
-    description: allows you to use this mount color
+    description: Allows use of white horses
     default: false
   horsemount.color.creamy:
-    description: allows you to use this mount color
+    description: Allows use of creamy horses
     default: false
   horsemount.color.chestnut:
-    description: allows you to use this mount color
+    description: Allows use of chestnut horses
     default: false
   horsemount.color.brown:
-    description: allows you to use this mount color
+    description: Allows use of brown horses
     default: false
   horsemount.color.black:
-    description: allows you to use this mount color
+    description: Allows use of black horses
     default: false
   horsemount.color.gray:
-    description: allows you to use this mount color
+    description: Allows use of gray horses
     default: false
   horsemount.color.darkbrown:
-    description: allows you to use this mount color
+    description: Allows use of dark brown horses
     default: false
