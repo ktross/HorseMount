@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate release tag
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.release-version.outputs.version }}
+
+    steps:
+      - name: Resolve version
+        id: release-version
+        shell: bash
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          if [[ ! "$TAG_NAME" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "Expected a release tag in vX.Y.Z form, got: $TAG_NAME" >&2
+            exit 1
+          fi
+          echo "version=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+
+  compatibility:
+    name: Build and test release candidate
+    needs: validate
+    uses: ./.github/workflows/runtime-smoke.yml
+    with:
+      version: ${{ needs.validate.outputs.version }}
+    permissions:
+      contents: read
+
+  publish:
+    name: Attest and publish tested JAR
+    needs: [validate, compatibility]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - name: Download tested release candidate
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: horsemount-runtime-candidate-${{ github.run_id }}
+          path: release-artifact
+
+      - name: Verify release candidate
+        id: artifact
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ needs.validate.outputs.version }}
+        run: |
+          artifact="HorseMount-${RELEASE_VERSION}.jar"
+          cd release-artifact
+          sha256sum --check "$artifact.sha256"
+          echo "path=release-artifact/$artifact" >> "$GITHUB_OUTPUT"
+          echo "checksum=release-artifact/$artifact.sha256" >> "$GITHUB_OUTPUT"
+
+      - name: Attest build provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: ${{ steps.artifact.outputs.path }}
+
+      - name: Create GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG_NAME: ${{ github.ref_name }}
+          ARTIFACT_PATH: ${{ steps.artifact.outputs.path }}
+          CHECKSUM_PATH: ${{ steps.artifact.outputs.checksum }}
+        run: >-
+          gh release create "$TAG_NAME"
+          "$ARTIFACT_PATH"
+          "$CHECKSUM_PATH"
+          --verify-tag
+          --generate-notes
+          --title "$TAG_NAME"

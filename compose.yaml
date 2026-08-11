@@ -1,0 +1,33 @@
+name: horsemount-dev
+
+services:
+  minecraft:
+    image: itzg/minecraft-server:2026.8.0-java25
+    pull_policy: missing
+    ports:
+      - "127.0.0.1:${MINECRAFT_PORT:-25565}:25565"
+    environment:
+      # Set MINECRAFT_EULA=TRUE in .env only after accepting the Minecraft EULA.
+      EULA: "${MINECRAFT_EULA:-FALSE}"
+      TYPE: PAPER
+      VERSION: "26.2"
+      PAPER_BUILD: "111"
+      MEMORY: "${MINECRAFT_MEMORY:-4G}"
+      ONLINE_MODE: "TRUE"
+      OPS: "${MINECRAFT_OPS:-}"
+      COPY_CONFIG_DEST: /data
+      REMOVE_OLD_MODS: "TRUE"
+      REMOVE_OLD_MODS_INCLUDE: "HorseMount*.jar"
+      REMOVE_OLD_MODS_DEPTH: "1"
+    volumes:
+      - ./.server/data:/data
+      - ./build/docker/plugins:/plugins:ro
+      - ./docker/dev-config:/config:ro
+    stdin_open: true
+    tty: true
+    restart: "no"
+    stop_grace_period: 2m
+    develop:
+      watch:
+        - action: restart
+          path: ./build/docker/plugins/HorseMount.jar

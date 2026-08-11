@@ -1,7 +1,18 @@
-#binary
-bin/
+# Gradle
+.gradle/
+build/
 
-#eclipse
+# Local Paper server
+.env
+.server/
+
+# IDEs
 .classpath
 .project
 .settings/
+.idea/
+*.iml
+out/
+
+# OS files
+.DS_Store

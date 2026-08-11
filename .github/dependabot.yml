@@ -1,0 +1,31 @@
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: America/Detroit
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    groups:
+      gradle-dependencies:
+        patterns:
+          - '*'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: America/Detroit
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    groups:
+      github-actions:
+        patterns:
+          - '*'
