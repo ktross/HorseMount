@@ -25,7 +25,7 @@ dependencyResolutionManagement {
 
         maven {
             name = "papermc"
-            url = uri("https://repo.papermc.io/repository/maven-public/")
+            url = uri("https://artifactory.papermc.io/artifactory/universe/")
             content {
                 includeGroup("com.mojang")
                 includeGroupByRegex("io\\.papermc(?:\\..*)?")
