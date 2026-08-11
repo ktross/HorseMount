@@ -36,6 +36,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -165,7 +166,12 @@ public final class HorseMount extends JavaPlugin implements Listener {
         mount.setOwner(owner);
         mount.setRemoveWhenFarAway(false);
         mount.setPersistent(display);
-        mount.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+        EntityEquipment equipment = mount.getEquipment();
+        if (equipment == null) {
+            mount.remove();
+            throw new IllegalStateException("Spawned mount has no equipment inventory");
+        }
+        equipment.setItem(EquipmentSlot.SADDLE, new ItemStack(Material.SADDLE));
 
         if (mount instanceof Horse horse) {
             horse.setStyle(horseStyle(profile.style()));

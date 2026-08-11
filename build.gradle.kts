@@ -45,11 +45,16 @@ java {
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.release.set(javaVersion)
-    options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xlint:unchecked"))
+    options.compilerArgs.add("-Xlint:unchecked")
 }
 
 tasks.named<JavaCompile>("compileJava") {
     description = "Compiles the plugin against the Spigot 26.2 compatibility baseline"
+    options.compilerArgs.add("-Xlint:deprecation")
+}
+
+tasks.named<JavaCompile>("compileTestJava") {
+    options.compilerArgs.add("-Xlint:deprecation")
 }
 
 val compilePaperCompatibilityJava = tasks.register<JavaCompile>("compilePaperCompatibilityJava") {
@@ -59,6 +64,9 @@ val compilePaperCompatibilityJava = tasks.register<JavaCompile>("compilePaperCom
     source(sourceSets.main.get().java)
     classpath = paperApiClasspath
     destinationDirectory = layout.buildDirectory.dir("classes/java/paperCompatibility")
+    // Paper deprecates String text bridges that remain necessary on Spigot and CraftBukkit.
+    // Missing or removed Paper APIs still fail this task; only that advisory lint is suppressed.
+    options.compilerArgs.add("-Xlint:-deprecation")
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(javaVersion)
     }
