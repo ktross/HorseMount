@@ -158,21 +158,27 @@ jobs:
           arguments=(
             --rev 26.2
             --output-dir "$output_dir"
-            --final-name server.jar
           )
           if [[ "$SERVER_ID" == craftbukkit ]]; then
             arguments+=(--compile craftbukkit)
+          else
+            arguments+=(--final-name server.jar)
           fi
 
           cd "$work_dir"
           export MAVEN_OPTS="-Dmaven.repo.local=$work_dir/maven-repository"
           java -Xmx2G -jar BuildTools.jar "${arguments[@]}"
 
-          if [[ ! -f "$output_dir/server.jar" ]]; then
-            echo "BuildTools did not produce $output_dir/server.jar" >&2
+          shopt -s nullglob
+          server_jars=("$output_dir"/*.jar)
+          if [[ ${#server_jars[@]} -ne 1 ]]; then
+            echo "Expected exactly one server JAR in $output_dir, found ${#server_jars[@]}." >&2
+            if [[ ${#server_jars[@]} -gt 0 ]]; then
+              printf '  %s\n' "${server_jars[@]}" >&2
+            fi
             exit 1
           fi
-          echo "jar=$output_dir/server.jar" >> "$GITHUB_OUTPUT"
+          echo "jar=${server_jars[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Start server and verify HorseMount
         shell: bash
