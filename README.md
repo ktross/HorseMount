@@ -148,7 +148,7 @@ Use `docker compose stop` to stop the server without deleting its world, or `doc
 
 ## CI and releases
 
-For pull requests and pushes, GitHub Actions runs the unit tests, compiles the shared source against the Paper and Spigot 26.2 APIs, and packages one platform-neutral JAR. These fast checks do not start a Minecraft server.
+For pull requests and pushes to `master`, GitHub Actions runs the unit tests, compiles the shared source against the Paper and Spigot 26.2 APIs, and packages one platform-neutral JAR. These fast checks do not start a Minecraft server.
 
 Manually dispatched and release-gated compatibility jobs then boot that exact JAR on Paper, Spigot, and CraftBukkit 26.2 and verify that HorseMount enables cleanly. These are startup compatibility checks rather than exhaustive gameplay tests. This project does not redistribute Spigot or CraftBukkit server JARs, so those lanes build them with the official BuildTools and do not cache or publish the resulting server artifacts; keeping the slower server builds out of routine pull-request checks makes that constraint manageable.
 
